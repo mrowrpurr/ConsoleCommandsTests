@@ -1,26 +1,18 @@
-scriptName ConsoleCommandTests_ManageCommands extends Lilac
+scriptName ConsoleCommandTests_ManageCommands extends ConsoleCommandsTest
 {Tests for adding, removing, and editing commands}
 
 function TestSuites()
-    describe("Adding commands", AddingCommandTests())
-    describe("Removing commands", RemovingCommandTests())
+    describe("Commands", AddingCommandTests())
 endFunction
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Resetting / Clearing all Commands
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; TODO
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Adding Commands
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 function AddingCommandTests()
-    it("can add a command", AddSimpleCommand())
+    it("can add a command", AddSimpleCommandTest())
+    it("can remove a command", RemoveSimpleCommandTest())
+    it("can clear all commands", ClearAllCommandsTest())
+    ; it("can add aliases for commands")
 endFunction
 
-function AddSimpleCommand()
+function AddSimpleCommandTest()
     expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
 
     ConsoleCommands.Add("mycommand")
@@ -30,19 +22,22 @@ function AddSimpleCommand()
     expectString(firstCommandName, to, beEqualTo, "mycommand")
 endFunction
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Removing Commands
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-function RemovingCommandTests()
-    it("can remove a command", RemoveSimpleCommand())
-endFunction
-
-function RemoveSimpleCommand()
+function RemoveSimpleCommandTest()
     ConsoleCommands.Add("mycommand")
     expectInt(ConsoleCommands.Count(), to, beEqualTo, 1)
 
     ConsoleCommands.Remove("mycommand")
+
+    expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
+endFunction
+
+function ClearAllCommandsTest()
+    ConsoleCommands.Add("hello")
+    ConsoleCommands.Add("world")
+    ConsoleCommands.Add("hi")
+    expectInt(ConsoleCommands.Count(), to, beEqualTo, 3)
+
+    ConsoleCommands.Clear()
 
     expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
 endFunction

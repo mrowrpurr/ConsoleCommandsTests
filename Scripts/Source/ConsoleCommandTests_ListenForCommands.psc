@@ -10,6 +10,7 @@ scriptName ConsoleCommandTests_ListenForCommands extends Quest ; Lilac
 ; endFunction
 
 ; function beforeEach()
+;     parent.beforeEach()
 ;     _fooEventCalled = true
 ;     _barEventCalled = true
 ; endFunction
