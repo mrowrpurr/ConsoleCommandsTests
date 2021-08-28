@@ -1,8 +1,8 @@
-Scriptname ConsoleCommandTests_CommandFlags extends ConsoleCommandsTest
+Scriptname ConsoleCommandTests_CommandFlags extends Quest
 {Tests for command flags, e.g. -s --silent}
 
 function TestSuites()
-    describe("Command Flags", CommandFlagTests())
+    ; describe("Command Flags", CommandFlagTests())
 endFunction
 
 function CommandFlagTests()

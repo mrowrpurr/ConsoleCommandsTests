@@ -1,0 +1,1 @@
+Scriptname ConsoleCommandTests_HelloCommand extends Quest  

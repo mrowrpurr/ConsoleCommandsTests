@@ -1,43 +1,44 @@
 scriptName ConsoleCommandTests_ManageCommands extends ConsoleCommandsTest
 {Tests for adding, removing, and editing commands}
 
-function TestSuites()
-    describe("Commands", AddingCommandTests())
-endFunction
-
-function AddingCommandTests()
-    it("can add a command", AddSimpleCommandTest())
-    it("can remove a command", RemoveSimpleCommandTest())
-    it("can clear all commands", ClearAllCommandsTest())
+function Tests()
+    Test("can add a command").Fn(AddSimpleCommandTest())
+    Test("can remove a command").Fn(RemoveSimpleCommandTest())
+    Test("can clear all commands").Fn(ClearAllCommandsTest())
     ; it("can add aliases for commands")
 endFunction
 
 function AddSimpleCommandTest()
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(0))
 
     ConsoleCommands.Add("mycommand")
 
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 1)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(1))
     string firstCommandName = ConsoleCommands.Names()[0]
-    expectString(firstCommandName, to, beEqualTo, "mycommand")
+    ExpectString(firstCommandName).To(EqualString("mycommand"))
 endFunction
 
 function RemoveSimpleCommandTest()
     ConsoleCommands.Add("mycommand")
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 1)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(1))
 
     ConsoleCommands.Remove("mycommand")
 
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(0))
 endFunction
 
 function ClearAllCommandsTest()
     ConsoleCommands.Add("hello")
     ConsoleCommands.Add("world")
     ConsoleCommands.Add("hi")
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 3)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(3))
+
+    string[] commandNames = ConsoleCommands.Names()
+    ExpectStringArray(commandNames).To(ContainString("hello"))
+    ExpectStringArray(commandNames).To(ContainString("world"))
+    ExpectStringArray(commandNames).To(ContainString("hi"))
 
     ConsoleCommands.Clear()
 
-    expectInt(ConsoleCommands.Count(), to, beEqualTo, 0)
+    ExpectInt(ConsoleCommands.Count()).To(EqualInt(0))
 endFunction
