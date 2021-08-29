@@ -1,104 +1,95 @@
-scriptName ConsoleCommandTests_CommandParser extends Quest
+scriptName ConsoleCommandTests_CommandParser extends ConsoleCommandsTest
 {Tests for the command parser}
 
-; function TestSuites()
-;     describe("Parsing simple arguments", ParsingSimpleArguments())
-;     describe("Parsing commands", ParsingCommandTests())
-;     ; describe("Parsing subcommands")
-;     ; describe("Parsing flags")
-;     ; describe("Parsing options")
-; endFunction
+function Tests()
+    ; No Commands, Just Arguments
+    Test("can parse empty example").Fn(EmptyCommandTest())
+    Test("can parse one argument").Fn(NoCommand_OneArgument())
+    Test("can parse multiple arguments").Fn(NoCommand_MultipleArguments())
+    Test("parser ignores extra spaces").Fn(NoCommand_MultipleArguments_ExtraSpaces())
+    Test("can parse one double quoted argument").Fn(NoCommand_DoubleQuotes_One())
+    Test("can parse a first argument double quoted").Fn(NoCommand_DoubleQuotes_First())
+    Test("can parse a last argument double quoted").Fn(NoCommand_DoubleQuotes_Last())
+    Test("can parse a middle argument double quoted").Fn(NoCommand_DoubleQuotes_Middle())
+    ; Commands
+    ; ...
+endFunction
 
-; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ;; Arguments
-; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; function ParsingSimpleArguments()
-;     it("can parse empty example", EmptyCommandTest())
-;     it("can parse one argument", NoCommand_OneArgument())
-;     it("can parse multiple arguments", NoCommand_MultipleArguments())
-;     it("parser ignores extra spaces", NoCommand_MultipleArguments_ExtraSpaces())
-;     it("can parse one double quoted argument", NoCommand_DoubleQuotes_One())
-;     it("can parse a first argument double quoted", NoCommand_DoubleQuotes_First())
-;     it("can parse a last argument double quoted", NoCommand_DoubleQuotes_Last())
-;     it("can parse a middle argument double quoted", NoCommand_DoubleQuotes_Middle())
-; endFunction
-
-; function EmptyCommandTest()
-;     int result = ConsoleCommandParser.Parse("")
+function EmptyCommandTest()
+    int result = ConsoleCommandParser.Parse("")
     
-;     expectBool(ConsoleCommandParser.IsEmpty(result), to, beEqualTo, true)
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 0)
-; endFunction
+    ExpectBool(ConsoleCommandParser.IsEmpty(result)).To(BeTrue())
+    ExpectString(ConsoleCommandParser.GetText(result)).To(BeEmpty())
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
+endFunction
 
-; function NoCommand_OneArgument()
-;     int result = ConsoleCommandParser.Parse("hello")
+function NoCommand_OneArgument()
+    int result = ConsoleCommandParser.Parse("hello")
     
-;     expectBool(ConsoleCommandParser.IsEmpty(result), to, beEqualTo, false)
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 1)
-;     expectString(ConsoleCommandParser.GetArguments(result)[0], to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-; endFunction
+    ExpectBool(ConsoleCommandParser.IsEmpty(result)).To(BeFalse())
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(1))
+    ExpectString(ConsoleCommandParser.GetArguments(result)[0]).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+endFunction
 
-; function NoCommand_MultipleArguments()
-;     int result = ConsoleCommandParser.Parse("hello world")
+function NoCommand_MultipleArguments()
+    int result = ConsoleCommandParser.Parse("hello world")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello world")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 2)
-;     expectString(ConsoleCommandParser.GetArguments(result)[0], to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArguments(result)[1], to, beEqualTo, "world")
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "world")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello world"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectString(ConsoleCommandParser.GetArguments(result)[0]).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArguments(result)[1]).To(EqualString("world"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("world"))
+endFunction
 
-; function NoCommand_MultipleArguments_ExtraSpaces()
-;     int result = ConsoleCommandParser.Parse(" hello      world   hi    ")
+function NoCommand_MultipleArguments_ExtraSpaces()
+    int result = ConsoleCommandParser.Parse(" hello      world   hi    ")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, " hello      world   hi    ")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 3)
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "world")
-;     expectString(ConsoleCommandParser.GetArgument(result, 2), to, beEqualTo, "hi")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString(" hello      world   hi    "))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(3))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("world"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 2)).To(EqualString("hi"))
+endFunction
 
-; function NoCommand_DoubleQuotes_One()
-;     int result = ConsoleCommandParser.Parse("\"hello\"")
+function NoCommand_DoubleQuotes_One()
+    int result = ConsoleCommandParser.Parse("\"hello\"")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "\"hello\"")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 1)
-;     expectString(ConsoleCommandParser.GetArguments(result)[0], to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To("\"hello\"")
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(1))
+    ExpectString(ConsoleCommandParser.GetArguments(result)[0]).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+endFunction
 
-; function NoCommand_DoubleQuotes_First()
-;     int result = ConsoleCommandParser.Parse("\"hello\" world")
+function NoCommand_DoubleQuotes_First()
+    int result = ConsoleCommandParser.Parse("\"hello\" world")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "\"hello\" world")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 2)
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "world")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("\"hello\" world"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("world"))
+endFunction
 
-; function NoCommand_DoubleQuotes_Last()
-;     int result = ConsoleCommandParser.Parse("hello \"world\"")
+function NoCommand_DoubleQuotes_Last()
+    int result = ConsoleCommandParser.Parse("hello \"world\"")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello \"world\"")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 2)
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "world")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello \"world\""))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("world"))
+endFunction
 
-; function NoCommand_DoubleQuotes_Middle()
-;     int result = ConsoleCommandParser.Parse("hello \"world\" hi")
+function NoCommand_DoubleQuotes_Middle()
+    int result = ConsoleCommandParser.Parse("hello \"world\" hi")
     
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello \"world\" hi")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 3)
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "hello")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "world")
-;     expectString(ConsoleCommandParser.GetArgument(result, 2), to, beEqualTo, "hi")
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello \"world\" hi"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(3))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("hello"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("world"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 2)).To(EqualString("hi"))
+endFunction
 
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ;; Commands
@@ -114,11 +105,11 @@ scriptName ConsoleCommandTests_CommandParser extends Quest
 
 ;     int result = ConsoleCommandParser.Parse("hello")
 
-;     expectBool(ConsoleCommandParser.IsEmpty(result), to, beEqualTo, false)
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 0)
-;     expectString(ConsoleCommandParser.GetCommand(result), to, beEqualTo, "hello")
-;     expectInt(ConsoleCommandParser.IdForCommand(result), to, beEqualTo, command)
+;     ExpectBool(ConsoleCommandParser.IsEmpty(result)).To(false)
+;     ExpectString(ConsoleCommandParser.GetText(result)).To("hello")
+;     ExpectInt(ConsoleCommandParser.GetArguments(result).Length).To(0)
+;     ExpectString(ConsoleCommandParser.GetCommand(result)).To("hello")
+;     ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(command)
 ; endFunction
 
 ; function Command_Arguments()
@@ -126,12 +117,12 @@ scriptName ConsoleCommandTests_CommandParser extends Quest
 
 ;     int result = ConsoleCommandParser.Parse("hello world hi")
 
-;     expectString(ConsoleCommandParser.GetText(result), to, beEqualTo, "hello world hi")
-;     expectInt(ConsoleCommandParser.GetArguments(result).Length, to, beEqualTo, 2)
-;     expectString(ConsoleCommandParser.GetArgument(result, 0), to, beEqualTo, "world")
-;     expectString(ConsoleCommandParser.GetArgument(result, 1), to, beEqualTo, "hi")
-;     expectString(ConsoleCommandParser.GetCommand(result), to, beEqualTo, "hello")
-;     expectInt(ConsoleCommandParser.IdForCommand(result), to, beEqualTo, command)
+;     ExpectString(ConsoleCommandParser.GetText(result)).To("hello world hi")
+;     ExpectInt(ConsoleCommandParser.GetArguments(result).Length).To(2)
+;     ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To("world")
+;     ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To("hi")
+;     ExpectString(ConsoleCommandParser.GetCommand(result)).To("hello")
+;     ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(command)
 ; endFunction
 
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
