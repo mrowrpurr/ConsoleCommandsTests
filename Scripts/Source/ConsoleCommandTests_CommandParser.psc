@@ -11,9 +11,15 @@ function Tests()
     Test("can parse a first argument double quoted").Fn(NoCommand_DoubleQuotes_First())
     Test("can parse a last argument double quoted").Fn(NoCommand_DoubleQuotes_Last())
     Test("can parse a middle argument double quoted").Fn(NoCommand_DoubleQuotes_Middle())
+
     ; Commands
-    ; ...
+    Test("can parse a single command without arguments").Fn(Command_NoArguments())
+    Test("can parse a single command with arguments").Fn(Command_Arguments())
 endFunction
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Just text. No Commands.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 function EmptyCommandTest()
     int result = ConsoleCommandParser.Parse("")
@@ -91,39 +97,34 @@ function NoCommand_DoubleQuotes_Middle()
     ExpectString(ConsoleCommandParser.GetArgument(result, 2)).To(EqualString("hi"))
 endFunction
 
-; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; ;; Commands
-; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Commands
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; function ParsingCommandTests()
-;     it("can parse a single command without arguments", Command_NoArguments())
-;     it("can parse a single command with arguments", Command_Arguments())
-; endFunction
+function Command_NoArguments()
+    int command = ConsoleCommands.Add("hello")
 
-; function Command_NoArguments()
-;     int command = ConsoleCommands.Add("hello")
+    int result = ConsoleCommandParser.Parse("hello")
 
-;     int result = ConsoleCommandParser.Parse("hello")
+    ExpectBool(ConsoleCommandParser.IsEmpty(result)).To(BeFalse())
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
+    ExpectString(ConsoleCommandParser.GetCommand(result)).To(EqualString("hello"))
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+endFunction
 
-;     ExpectBool(ConsoleCommandParser.IsEmpty(result)).To(false)
-;     ExpectString(ConsoleCommandParser.GetText(result)).To("hello")
-;     ExpectInt(ConsoleCommandParser.GetArguments(result).Length).To(0)
-;     ExpectString(ConsoleCommandParser.GetCommand(result)).To("hello")
-;     ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(command)
-; endFunction
+function Command_Arguments()
+    int command = ConsoleCommands.Add("hello")
 
-; function Command_Arguments()
-;     int command = ConsoleCommands.Add("hello")
+    int result = ConsoleCommandParser.Parse("hello world hi")
 
-;     int result = ConsoleCommandParser.Parse("hello world hi")
-
-;     ExpectString(ConsoleCommandParser.GetText(result)).To("hello world hi")
-;     ExpectInt(ConsoleCommandParser.GetArguments(result).Length).To(2)
-;     ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To("world")
-;     ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To("hi")
-;     ExpectString(ConsoleCommandParser.GetCommand(result)).To("hello")
-;     ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(command)
-; endFunction
+    ExpectString(ConsoleCommandParser.GetText(result)).To(EqualString("hello world hi"))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 0)).To(EqualString("world"))
+    ExpectString(ConsoleCommandParser.GetArgument(result, 1)).To(EqualString("hi"))
+    ExpectString(ConsoleCommandParser.GetCommand(result)).To(EqualString("hello"))
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+endFunction
 
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ;; Subcommands
