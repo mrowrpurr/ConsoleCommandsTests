@@ -1,4 +1,3 @@
-[Lilac][] tests for [ConsoleCommands][] Skyrim mod
+Tests for [ConsoleCommands][]
 
-[Lilac]: https://github.com/mrowrpurr/Lilac
 [ConsoleCommands]: https://github.com/mrowrpurr/ConsoleCommands
