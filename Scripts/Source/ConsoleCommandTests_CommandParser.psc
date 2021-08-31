@@ -15,6 +15,9 @@ function Tests()
     ; Commands
     Test("can parse a single command without arguments").Fn(Command_NoArguments())
     Test("can parse a single command with arguments").Fn(Command_Arguments())
+
+    ; Subcommand
+    Test("can parse a single subcommand without arguments").Fn(Subcommand_NoArguments())
 endFunction
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -129,6 +132,23 @@ endFunction
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ;; Subcommands
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+function Subcommand_NoArguments()
+    int command = ConsoleCommands.Add("greeting")
+    int subcommand = ConsoleCommands.AddSubcommand("greeting", "hello")
+
+    int result = ConsoleCommandParser.Parse("greeting")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(0))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
+
+    result = ConsoleCommandParser.Parse("greeting hello")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(subcommand))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(subcommand))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
+endFunction
 
 ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ;; Flags
