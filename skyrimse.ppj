@@ -19,6 +19,7 @@
     </Variables>
     <Imports>
         <Import>@ModsFolder\SkyUnit\Scripts\Source</Import>
+        <Import>@ModsFolder\ConsoleMenu\Scripts\Source</Import>
         <Import>@ModsFolder\ConsoleCommands\Scripts\Source</Import>
         <Import>@ImportsFolder\SKSE64\Scripts\Source</Import>
         <!-- <Import>@ImportsFolder\Lilac\Scripts\Source</Import> -->

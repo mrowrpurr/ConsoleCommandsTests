@@ -1,1 +1,2 @@
-Scriptname ConsoleCommandTests_HelloCommand extends Quest  
+scriptName ConsoleCommandTests_HelloCommand extends Quest
+
