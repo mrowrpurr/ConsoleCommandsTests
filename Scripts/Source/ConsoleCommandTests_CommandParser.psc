@@ -1,6 +1,8 @@
 scriptName ConsoleCommandTests_CommandParser extends ConsoleCommandsTest
 {Tests for the command parser}
 
+import ArrayAssertions
+
 function Tests()
     ; No Commands, Just Arguments
     Test("can parse empty example").Fn(EmptyCommandTest())
@@ -18,6 +20,8 @@ function Tests()
 
     ; Subcommand
     Test("can parse a single subcommand without arguments").Fn(Subcommand_NoArguments())
+    Test("can parse a single subcommand with arguments").Fn(Subcommand_WithArguments())
+    Test("can parse a subcommand of a subcommand without arguments").Fn(Subcommand_Subcommand_NoArguments())
 endFunction
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -147,6 +151,52 @@ function Subcommand_NoArguments()
     ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
     ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(subcommand))
     ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(subcommand))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
+endFunction
+
+function Subcommand_WithArguments()
+    int command = ConsoleCommands.Add("greeting")
+    int subcommand = ConsoleCommands.AddSubcommand("greeting", "hello")
+
+    int result = ConsoleCommandParser.Parse("greeting hi there")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(0))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(EqualStringArray2("hi", "there"))
+
+    result = ConsoleCommandParser.Parse("greeting hello foo bar")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(subcommand))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(subcommand))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(2))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(EqualStringArray2("foo", "bar"))
+endFunction
+
+function Subcommand_Subcommand_NoArguments()
+    int command = ConsoleCommands.Add("greeting")
+    int subcommand = ConsoleCommands.AddSubcommand("greeting", "hello")
+    int subcommand_subcommand = ConsoleCommands.AddSubcommand("greeting hello", "hi")
+    MiscUtil.PrintConsole("Subcommand Subcommand ID: " + subcommand_subcommand)
+
+    int result = ConsoleCommandParser.Parse("greeting hi")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(0))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(1))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(EqualStringArray1("hi"))
+
+    result = ConsoleCommandParser.Parse("greeting hello foo")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(subcommand))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(subcommand))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(HaveLength(1))
+    ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(EqualStringArray1("foo"))
+
+    result = ConsoleCommandParser.Parse("greeting hello hi")
+    ExpectInt(ConsoleCommandParser.IdForCommand(result)).To(EqualInt(command))
+    ExpectInt(ConsoleCommandParser.IdForCommandOrSubcommand(result)).To(EqualInt(subcommand_subcommand))
+    ExpectInt(ConsoleCommandParser.IdForSubcommand(result)).To(EqualInt(subcommand_subcommand))
     ExpectStringArray(ConsoleCommandParser.GetArguments(result)).To(BeEmpty())
 endFunction
 
